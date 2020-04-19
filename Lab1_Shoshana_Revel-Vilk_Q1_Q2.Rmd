@@ -19,9 +19,8 @@ for (i in list(data_con, data_death, data_rec)) {
 }
 
 #Aggregated data-frames using 'aggregate' function#
-cases.agg = aggregate(Value ~ Country.Region + Date, data = data_con, FUN = sum)
-death.agg = aggregate(Value ~ Country.Region + Date, data= data_death, FUN = sum)
-recover.agg = aggregate(Value ~ Country.Region + Date, data = data_rec, FUN =sum)
+datasets= list(cases.agg= data_con, death.agg = data_death, recover.agg= data_rec)
+agg= lapply(datasets, function(x) {aggregate(Value ~ Country.Region + Date, data = x, FUN= sum) })
 
 #Aggregated data-frames using tidyverse#
 library(tidyverse)
@@ -30,10 +29,12 @@ death.agg.pipe = data_death %>% group_by(Country.Region, Date) %>% summarise(Val
 recover.agg.pipe = data_rec %>% group_by(Country.Region, Date) %>% summarise(Value = sum(Value))
 
 #proof of similarity between the agg.data#
-proof= all.equal.numeric(death.agg$Value, death.agg.pipe$Value)
+y= list(cases.agg.pipe, death.agg.pipe, recover.agg.pipe)
+proof= all.equal(agg,y)
+print(proof)
 
 #data on the 31.3.2020#
-joined_top =  bind_cols(list(cases.agg, death.agg, recover.agg)) %>%  filter(Date == "2020-03-31") %>%  select("Country.Region", "Value", "Value1", "Value2") %>%  rename(Cases = Value, Died = Value1, Recovered = Value2) %>% arrange(desc(Cases)) %>% top_n( 10, Cases)
+joined_top =  bind_cols(list(agg[[1]], agg[[2]], agg[[3]])) %>%  filter(Date == "2020-03-31") %>%  select("Country.Region", "Value", "Value1", "Value2") %>%  rename(Cases = Value, Died = Value1, Recovered = Value2) %>% arrange(desc(Cases)) %>% top_n( 10, Cases)
 print(joined_top)
 
 #barplot of data on 31.3.2020# 
