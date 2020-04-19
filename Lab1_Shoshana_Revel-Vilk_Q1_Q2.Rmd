@@ -41,8 +41,9 @@ cases = matrix (c(joined_top$Cases, joined_top$Died, joined_top$Recovered), nrow
 rownames(cases)= c(as.character(joined_top$Country.Region))
 colnames(cases) = c('Cases','Died','Recovered')
 cases.t = t(cases)
-{cases.plot = barplot(cases.t[1,], xlab = "Countries", ylab = "Corona cases", main = "The top 10 countries of confirmed cases in 31.March.2020", col = c("red"), legend = rownames(cases.t[1,]))
-others.plot = barplot(cases.t[2:3,], xlab = "Countries", ylab = "Corona cases", main = "The top 10 countries of confirmed cases in 2020-03-31", col = c("dark blue", "green"), legend = rownames(cases.t[2:3,]), add = T)}
+par(mar = c(11, 11, 20, 11))
+{cases.plot = barplot(cases.t[1,], ylab = "Number of Corona cases", main = "The top 10 countries with  confirmed cases in 31 March 2020",  width= 0.5,  cex.axis = 0.75, cex.lab= 1, las= 1, col = c("red"), ylim= c(0,200000), legend = rownames(cases.t[1,]))
+others.plot = barplot(cases.t[2:3,], width= 0.5, cex.axis = 0.75, cex.lab= 1, las= 1, col = c("dark blue", "green"), legend = rownames(cases.t[2:3,]), add = T)}
 
 
 ```
@@ -56,23 +57,26 @@ top.diff.death = death.agg %>% group_by(Country.Region) %>%  mutate(diff.death =
 
 #Print the result in a descriptive format#
 print(top.diff.cases)
-{x= barplot(top.diff.cases$diff.cases, names.arg = top.diff.cases$Date, main= 'Top 10  country & date combinations with the greatest new daily Corona cases', ylab= 'Absolute difference', las=2,  cex.axis = 0.75, cex.names= 0.75, col= rainbow(10))
+{x= barplot(top.diff.cases$diff.cases, names.arg = top.diff.cases$Date, main= 'Top 10 country & date with the greatest new daily Corona cases', ylab= 'Absolute difference', las=2,  cex.axis = 0.75, cex.names= 0.75, col= rainbow(10))
 text(x, 0 ,top.diff.cases$Country.Region, cex=1, pos=3, col='black')
 }
 print(top.diff.death)
-{y= barplot(top.diff.death$diff.death, names.arg = top.diff.death$Date, main= 'Top 10  country & date combinations with the greatest new daily Corona death', ylab= 'Absolute difference', las=2, cex.axis = 0.75, cex.names= 0.75, col= rainbow(10))
+{y= barplot(top.diff.death$diff.death, names.arg = top.diff.death$Date, main= 'Top 10 country & date with the greatest new daily Corona death', ylab= 'Absolute difference', las=2, cex.axis = 0.75, cex.names= 0.75, col= rainbow(10))
 text(y, 0 ,top.diff.death$Country.Region, cex=1, pos=3, col='black')
 }
 
 #plot Italy’s new daily Corona cases AND deaths as a function of Date#
-italy.cases = cases.agg %>% filter (Country.Region == 'Italy') %>%  mutate(diff.cases = Value - lag(Value, default = 0)) %>% select('Date', 'diff.cases')
+italy.cases = cases.agg %>% filter (Country.Region == 'Italy') %>%  mutate(diff.cases = Value - lag(Value, default = 0)) %>% select('Date', 'diff.cases')  
 italy.death = death.agg %>% filter (Country.Region == 'Italy') %>%  mutate(diff.death = Value - lag(Value, default = 0)) %>% select('Date', 'diff.death')
+italy.cases$Date = as.Date(italy.cases$Date)
+italy.death$Date = as.Date(italy.death$Date)
+
 
 par(pch=22, col="red") 
-par(mfrow=c(2,2)) 
-{plot(italy.cases$Date, italy.cases$diff.cases, type ="c", main = 'Italy’s new daily Corona cases', xlab = 'Time', ylab = 'Corona cases')
+par(mfrow=c(1,2)) 
+{plot(italy.cases$Date, italy.cases$diff.cases, type ="c", main = 'Italy’s new daily Corona cases', xlab = 'Time', ylab = 'Corona cases', ylim=c(0,7000))
 lines(italy.cases$Date, italy.cases$diff.cases, type="l")}
-{plot(italy.death$Date, italy.death$diff.death, type ="c", main = 'Italy’s new daily Corona death', xlab = 'Time', ylab = 'Corona cases')
+{plot(italy.death$Date, italy.death$diff.death, type ="c", main = 'Italy’s new daily Corona death', xlab = 'Time', ylab = 'Corona cases', ylim=c(0,7000))
 lines(italy.death$Date, italy.death$diff.death, type="l")}
 ```
 
