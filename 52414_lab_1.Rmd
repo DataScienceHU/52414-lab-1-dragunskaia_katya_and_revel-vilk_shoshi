@@ -66,8 +66,46 @@ d. Using the last day of March as a reference, create a single stacked bar-plot 
   
 **Solution:**  
 
-YOUR SOLUTION HERE.
-Use code blocks and markdown to clearly communicate your work. 
+```{r}
+data_con = read.csv(url("https://data.humdata.org/hxlproxy/data/download/time_series_covid19_confirmed_global_narrow.csv?dest=data_edit&filter01=merge&merge-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D1326629740%26single%3Dtrue%26output%3Dcsv&merge-keys01=%23country%2Bname&merge-tags01=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D398158223%26single%3Dtrue%26output%3Dcsv&merge-keys02=%23adm1%2Bname&merge-tags02=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&merge-replace02=on&merge-overwrite02=on&filter03=explode&explode-header-att03=date&explode-value-att03=value&filter04=rename&rename-oldtag04=%23affected%2Bdate&rename-newtag04=%23date&rename-header04=Date&filter05=rename&rename-oldtag05=%23affected%2Bvalue&rename-newtag05=%23affected%2Binfected%2Bvalue%2Bnum&rename-header05=Value&filter06=clean&clean-date-tags06=%23date&filter07=sort&sort-tags07=%23date&sort-reverse07=on&filter08=sort&sort-tags08=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_confirmed_global.csv"), comment.char = "#")
+
+data_death = read.csv(url("https://data.humdata.org/hxlproxy/data/download/time_series_covid19_deaths_global_narrow.csv?dest=data_edit&filter01=merge&merge-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D1326629740%26single%3Dtrue%26output%3Dcsv&merge-keys01=%23country%2Bname&merge-tags01=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D398158223%26single%3Dtrue%26output%3Dcsv&merge-keys02=%23adm1%2Bname&merge-tags02=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&merge-replace02=on&merge-overwrite02=on&filter03=explode&explode-header-att03=date&explode-value-att03=value&filter04=rename&rename-oldtag04=%23affected%2Bdate&rename-newtag04=%23date&rename-header04=Date&filter05=rename&rename-oldtag05=%23affected%2Bvalue&rename-newtag05=%23affected%2Binfected%2Bvalue%2Bnum&rename-header05=Value&filter06=clean&clean-date-tags06=%23date&filter07=sort&sort-tags07=%23date&sort-reverse07=on&filter08=sort&sort-tags08=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_deaths_global.csv"), comment.char = "#")
+
+data_rec = read.csv (url("https://data.humdata.org/hxlproxy/data/download/time_series_covid19_recovered_global_narrow.csv?dest=data_edit&filter01=merge&merge-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D1326629740%26single%3Dtrue%26output%3Dcsv&merge-keys01=%23country%2Bname&merge-tags01=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D398158223%26single%3Dtrue%26output%3Dcsv&merge-keys02=%23adm1%2Bname&merge-tags02=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&merge-replace02=on&merge-overwrite02=on&filter03=explode&explode-header-att03=date&explode-value-att03=value&filter04=rename&rename-oldtag04=%23affected%2Bdate&rename-newtag04=%23date&rename-header04=Date&filter05=rename&rename-oldtag05=%23affected%2Bvalue&rename-newtag05=%23affected%2Binfected%2Bvalue%2Bnum&rename-header05=Value&filter06=clean&clean-date-tags06=%23date&filter07=sort&sort-tags07=%23date&sort-reverse07=on&filter08=sort&sort-tags08=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_recovered_global.csv"), comment.char = "#")
+
+#Change to Date type#
+for (i in list(data_con, data_death, data_rec)) {
+     i$Date = as.Date(i$Date)}
+class(data_con$Date)
+
+#Aggregated data-frames using 'aggregate' function#
+datasets= list(cases.agg= data_con, death.agg = data_death, recover.agg= data_rec)
+agg= lapply(datasets, function(x) {aggregate(Value ~ Country.Region + Date, data = x, FUN= sum) })
+
+#Aggregated data-frames using tidyverse#
+library(tidyverse)
+datasets.pipe = list(cases.agg.pipe = data_con, death.agg.pipe = data_death, recover.agg.pipe = data_rec)
+agg.pipe = lapply(datasets.pipe, function(df){
+  df %>% group_by(Country.Region, Date) %>% summarise(Value = sum(Value)) %>% arrange(Date)})
+
+#proof of similarity between the agg.data#
+proof= all_equal(agg, agg.pipe)
+print(paste='The values are similar. the only diffence in the name', proof)
+
+#data on the 31.3.2020#
+joined_top =  bind_cols(list(agg[[1]], agg[[2]], agg[[3]])) %>%  filter(Date == "2020-03-31") %>%  select("Country.Region", "Value", "Value1", "Value2") %>%  rename(Cases = Value, Died = Value1, Recovered = Value2) %>% arrange(desc(Cases)) %>% top_n( 10, Cases)
+print(joined_top)
+
+#barplot of data on 31.3.2020# 
+cases = matrix (c(joined_top$Cases, joined_top$Died, joined_top$Recovered), nrow=10, ncol=3)
+rownames(cases)= c(as.character(joined_top$Country.Region))
+colnames(cases) = c('Cases','Died','Recovered')
+cases.t = t(cases)
+par(mar = c(11, 11, 11, 11))
+{cases.plot = barplot(cases.t[1,], ylab = "Number of Corona cases", xlab= "Countries", main = "The top 10 countries with  confirmed cases in 31 March 2020", width= 0.5,  cex.axis = 0.75, cex.lab= 1, las= 1, col = c("red"), ylim= c(0,200000))
+others.plot = barplot(cases.t[2:3,], width= 0.5, cex.axis = 0.75, cex.lab= 1, las= 1, col = c("dark blue", "green"), legend = rownames(cases.t[2:3,]), add = T)}
+
+```
 
 <br/><br/>  
 
@@ -85,8 +123,35 @@ d. Plot the same graph as in (c), but this time plot the number of new cases on 
   
 **Solution:**    
 
-YOUR SOLUTION HERE.
-Use code blocks and markdown to clearly communicate your work.
+```{r}
+#finding the difference between days on agg.data#
+top.diff.cases = cases.agg %>% group_by(Country.Region) %>%  mutate(diff.cases = Value - lag(Value, default = 0)) %>% select('Country.Region', 'Date', 'diff.cases') %>% ungroup %>% top_n(10, diff.cases)
+top.diff.death = death.agg %>% group_by(Country.Region) %>%  mutate(diff.death = Value - lag(Value, default = 0)) %>% select('Country.Region', 'Date', 'diff.death') %>% ungroup %>% top_n(10, diff.death)
+
+#Print the result in a descriptive format#
+print(top.diff.cases)
+{x= barplot(top.diff.cases$diff.cases, names.arg = top.diff.cases$Date, main= 'Top 10 country & date with the greatest new daily Corona cases', ylab= 'Absolute difference', las=2,  cex.axis = 0.75, cex.names= 0.75, col= rainbow(10))
+text(x, 0 ,top.diff.cases$Country.Region, cex=1, pos=3, col='black')
+}
+print(top.diff.death)
+{y= barplot(top.diff.death$diff.death, names.arg = top.diff.death$Date, main= 'Top 10 country & date with the greatest new daily Corona death', ylab= 'Absolute difference', las=2, cex.axis = 0.75, cex.names= 0.75, col= rainbow(10))
+text(y, 0 ,top.diff.death$Country.Region, cex=1, pos=3, col='black')
+}
+
+#plot Italy’s new daily Corona cases AND deaths as a function of Date#
+italy.cases = cases.agg %>% filter (Country.Region == 'Italy') %>%  mutate(diff.cases = Value - lag(Value, default = 0)) %>% select('Date', 'diff.cases')  
+italy.death = death.agg %>% filter (Country.Region == 'Italy') %>%  mutate(diff.death = Value - lag(Value, default = 0)) %>% select('Date', 'diff.death')
+italy.cases$Date = as.Date(italy.cases$Date)
+italy.death$Date = as.Date(italy.death$Date)
+
+
+par(pch=22, col="red") 
+par(mfrow=c(1,2)) 
+{plot(italy.cases$Date, italy.cases$diff.cases, type ="c", main = 'Italy’s new daily Corona cases', xlab = 'Time', ylab = 'Corona cases', ylim=c(0,7000))
+lines(italy.cases$Date, italy.cases$diff.cases, type="l")}
+{plot(italy.death$Date, italy.death$diff.death, type ="c", main = 'Italy’s new daily Corona death', xlab = 'Time', ylab = 'Corona cases', ylim=c(0,7000))
+lines(italy.death$Date, italy.death$diff.death, type="l")}
+
 
 <br/><br/>
 
@@ -102,7 +167,7 @@ c. Select and rename the following columns: `country` as country, `GDP(US curren
 d. Show a table of the five countries with the highest per capita GDP in 2018.     
 Next (considering all countries), plot the % of population over 65 vs. log of GDP per capita in 2018, after excluding the 10% countries with the lowest GDP per capita. Using `lm` and `abline`, add a regression line to the plot. What is your conclusion? (13 pts)  
   
-  
+```  
   
 **Solution:** 
 
