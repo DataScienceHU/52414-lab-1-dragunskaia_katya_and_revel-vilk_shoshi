@@ -16,6 +16,7 @@ data_rec = read.csv (url("https://data.humdata.org/hxlproxy/data/download/time_s
 #Change to Date type#
 for (i in list(data_con, data_death, data_rec)) {
      i$Date = as.Date(i$Date)}
+class(data_con$Date)
 
 #Aggregated data-frames using 'aggregate' function#
 datasets= list(cases.agg= data_con, death.agg = data_death, recover.agg= data_rec)
