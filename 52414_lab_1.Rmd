@@ -67,7 +67,7 @@ d. Using the last day of March as a reference, create a single stacked bar-plot 
 **Solution:**  
 
 YOUR SOLUTION HERE.
-Use code blocks and markdown to clearly communicate your work. 
+Use code blocks and markdown to clearly communicate your work.
 
 <br/><br/>  
 
@@ -112,8 +112,54 @@ eco_data <- read.csv(url("https://raw.githubusercontent.com/DataScienceHU/DataAn
 
 ```
 
-YOUR SOLUTION HERE.
-Use code blocks and markdown to clearly communicate your work.
+### a
+Rename columns using function rename
+```{r}
+eco_data <- rename(eco_data, country = `п.їCountry.Name`, 
+       S_country = Country.Code, 
+       feature = Series.Name, 
+       feature_code = Series.Code,
+       Y2018V = X2018..YR2018.,
+       Y2019V = X2019..YR2019.)
+```
+
+### b
+Create new data frame eco using dplyr functions such like select, filter and spread. New data frame eco contains 11 columns. Firsr column is a country and others are features. Rows contains values for each country.
+```{r}
+eco = eco_data %>% select(country, feature, Y2018V) %>% filter(as.character(feature) != "") %>% spread(feature, Y2018V)
+```
+### c
+Rename and select using dplyr function select
+```{r}
+eco = eco %>% select(country, 
+                     GDP = `GDP (current US$)`, 
+                     pop_total = `Population, total`,  
+                     pop_city_ratio = `Population in the largest city (% of urban population)`, 
+                     pop65 = `Population ages 65 and above (% of total population)`)
+```
+
+### d
+Import the library tidyverse and dplyr to solve that question <br></br>
+1. Using tidyverse find 10 countries with the most GDP
+2. Using tidyverse we are looking for new data frame
+3. Now we will build the plot and regression line
+We can see from the plot that there is no relation between GPD per capita and Population ages 65 and above.
+```{r}
+#1
+eco_gdp = eco %>% arrange(desc(GDP)) %>% filter(as.character(GDP) != "..") %>% filter(as.character(pop65) != "..")
+head(eco_gdp, n = 10)
+
+#2
+eco_gdp_90 = eco_gdp %>% mutate(logGDP_per_capita = log(as.numeric(as.character(GDP))/as.numeric(as.character(pop_total)))*100) %>% head(n = round(length(eco_gdp$country)*0.9))
+
+#3
+lm_pop65 <-lm(formula = as.vector(eco_gdp_90$pop65) ~ as.vector(eco_gdp_90$logGDP_per_capita))
+plot(x = eco_gdp_90$logGDP_per_capita, y = eco_gdp_90$pop65,
+     main = "Q3 (d)", 
+     xlab = "logGDP_per_capita",
+     ylab = "Population ages 65 and above (% of total population)",
+     abline(lm_pop65))
+```
 
 <br/><br/>  
 
@@ -134,8 +180,49 @@ In addition, color the outliers( pop65>24, norm100K_deaths>15) in that plot in r
   
 **Solution:**   
 
-YOUR SOLUTION HERE.
-Use code blocks and markdown to clearly communicate your work.
+### a
+Joining three datas frame using bind_cols and rename
+```{r}
+corona = cases.agg %>% bind_cols(select(recovered.agg, Value)) %>% bind_cols(select(death.agg, Value)) %>% rename(cases = Value, recovered = Value1, deaths = Value2)
+```
+### b
+To join corona and eco using inner_join. Show head to prove that we didn`t lost anythung.
+```{r}
+corona_eco = corona %>% inner_join(eco, by = c("Country.Region" = "country"))
+head(corona_eco)
+```
+### c
+1. Using mutate we creating three new colums.
+2. Build par plot similary to Q1. We can see that even if a country occupies a high position in terms of the number of confurmed cases, this does not mean that there is a large number of confurmed cases per 100000. It is depends of total populatin in the country.
+```{r}
+#1
+corona_eco = corona_eco %>% mutate(norm_cases = (as.numeric(as.character(cases))/as.numeric(as.character(pop_total)))*100000) %>% mutate(norm_recovered = (as.numeric(as.character(recovered))/as.numeric(as.character(pop_total)))*100000) %>% mutate(norm_deaths = (as.numeric(as.character(deaths))/as.numeric(as.character(pop_total)))*100000)
+#2
+corona_eco_march = corona_eco %>% filter(Date == "2020-03-31") %>% arrange(desc(norm_cases)) %>% top_n( 10, norm_cases) %>% select(Country.Region, norm_cases, norm_recovered, norm_deaths) %>% mutate(norm_sick = as.numeric(as.character(norm_cases))-as.numeric(as.character(norm_deaths))-as.numeric(as.character(norm_recovered)))
+
+cases_norm = matrix (c(corona_eco_march$norm_sick, corona_eco_march$norm_deaths, corona_eco_march$norm_recovered), nrow=10, ncol=3)
+rownames(cases_norm)= c(as.character(corona_eco_march$Country.Region))
+colnames(cases_norm) = c('norm_cases','norm_died','norm_recovered')
+cases_norm.t = t(cases_norm)
+par(mar = c(11, 11, 11, 11))
+{cases_norm.plot = barplot(cases_norm.t[1,], ylab = "Number of Corona sick cases per 100000 people", xlab= "Countries", main = "The top 10 countries with  confirmed cases in 31 March 2020", width= 0.5,  cex.axis = 0.75, cex.lab= 1, las= 1, col = c("red"), ylim= c(0,600))
+others.plot = barplot(cases_norm.t[2:3,], width= 0.5, cex.axis = 0.75, cex.lab= 1, las= 1, col = c("dark blue", "green"), legend = rownames(cases.t[2:3,]), add = T)}
+```
+
+### d
+First we create data frame to make work easily. Then we build plot using basic graph function.
+```{r}
+corona_eco_plot = corona_eco %>% filter(as.numeric(as.character(pop65)) > 15) %>% filter(Date == "2020-03-31")
+deaths_num <- which(as.numeric(as.character(corona_eco_plot$norm_deaths)) > 15)
+pop65_num <- which(as.numeric(as.character(corona_eco_plot$pop65)) > 24)
+plot(x = as.numeric(as.character(corona_eco_plot$norm_cases)), y = as.numeric(as.character(corona_eco_plot$pop65)),
+     col = ifelse((as.numeric(as.character(corona_eco_plot$pop65)) > 24), "red", "black"),
+     points(x = corona_eco_plot$norm_deaths, col = ifelse(as.numeric(as.character(corona_eco_plot$norm_deaths)) > 15, "red", "black")),
+     xlab = "Cases and death",
+     ylab = "Population above 65")
+text(as.numeric(as.character(corona_eco_plot$pop65[pop65_num])), labels = corona_eco_plot$Country.Region[pop65_num])
+text(as.numeric(as.character(corona_eco_plot$norm_deaths))[deaths_num], as.numeric(as.character(corona_eco_plot$pop65))[deaths_num], labels = corona_eco_plot$Country.Region[deaths_num])
+```
 
 <br/><br/>  
 
