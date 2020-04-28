@@ -94,8 +94,9 @@ cases = matrix (c(joined_top$Cases, joined_top$Died, joined_top$Recovered), nrow
 rownames(cases)= c(as.character(joined_top$Country.Region))
 colnames(cases) = c('Cases','Died','Recovered')
 cases.t = t(cases)
-{cases.plot = barplot(cases.t[1,], ylab = "Number of Corona cases", xlab= "Countries", main = "The top 10 countries with  confirmed cases in 31 March 2020", width= 0.5,  cex.axis = 0.75, cex.lab= 1, las= 1, col = c("red"), ylim= c(0,200000))
-others.plot = barplot(cases.t[2:3,], width= 0.5, cex.axis = 0.75, cex.lab= 1, las= 1, col = c("dark blue", "green"), legend = rownames(cases.t[2:3,]), add = T)}
+{cases.plot = barplot(cases.t[1,], ylab = "Corona cases ", xlab= "Countries", main = "Top 10 countries with confirmed cases in 31 March 2020", width= 0.5,  cex.axis = 0.75, cex.lab= 1, las= 1, col = "red", ylim= c(0,200000))
+others.plot = barplot(cases.t[2:3,], width= 0.5, cex.axis = 0.75, cex.lab= 1, las= 1, col=c("green","dark blue"), add = T)
+legend(4.5, 180000, c("sick", "dead", "recovered"), fill= rainbow(3))}
 ```
 
 <br/><br/>  
@@ -170,6 +171,7 @@ eco_data <- read.csv(url("https://raw.githubusercontent.com/DataScienceHU/DataAn
 Rename columns using function rename
 ```{r}
 names(eco_data) <- c("country", "S_country", "feature", "feature_code", "Y2018V", "Y2019V")
+eco_data$Y2018V = as.numeric(as.character(eco_data$Y2018V))
 ```
 
 ### b
@@ -189,13 +191,8 @@ eco = eco %>% select(country,
 ```
 
 ### d
-Before we will continue to work with data we will change typeof of collumns with number to make work easily.
-```{r, include=FALSE}
-eco$GDP <- as.numeric(as.character(eco$GDP))
-eco$pop_total <- as.numeric(as.character(eco$pop_total))
-eco$pop_city_ratio <- as.numeric(as.character(eco$pop_city_ratio))
-eco$pop65 <- as.numeric(as.character(eco$pop65))
-```
+
+
 Import the library tidyverse and dplyr to solve that question <br></br>
 1. Using tidyverse find 10 countries with the most GDP
 2. Using tidyverse we are looking for new data frame
