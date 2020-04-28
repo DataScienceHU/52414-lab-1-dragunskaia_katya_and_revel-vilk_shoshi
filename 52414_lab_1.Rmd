@@ -70,6 +70,10 @@ d. Using the last day of March as a reference, create a single stacked bar-plot 
 data_con = read.csv(url("https://data.humdata.org/hxlproxy/data/download/time_series_covid19_confirmed_global_narrow.csv?dest=data_edit&filter01=merge&merge-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D1326629740%26single%3Dtrue%26output%3Dcsv&merge-keys01=%23country%2Bname&merge-tags01=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D398158223%26single%3Dtrue%26output%3Dcsv&merge-keys02=%23adm1%2Bname&merge-tags02=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&merge-replace02=on&merge-overwrite02=on&filter03=explode&explode-header-att03=date&explode-value-att03=value&filter04=rename&rename-oldtag04=%23affected%2Bdate&rename-newtag04=%23date&rename-header04=Date&filter05=rename&rename-oldtag05=%23affected%2Bvalue&rename-newtag05=%23affected%2Binfected%2Bvalue%2Bnum&rename-header05=Value&filter06=clean&clean-date-tags06=%23date&filter07=sort&sort-tags07=%23date&sort-reverse07=on&filter08=sort&sort-tags08=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_confirmed_global.csv"), comment.char = "#")
 data_death = read.csv(url("https://data.humdata.org/hxlproxy/data/download/time_series_covid19_deaths_global_narrow.csv?dest=data_edit&filter01=merge&merge-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D1326629740%26single%3Dtrue%26output%3Dcsv&merge-keys01=%23country%2Bname&merge-tags01=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D398158223%26single%3Dtrue%26output%3Dcsv&merge-keys02=%23adm1%2Bname&merge-tags02=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&merge-replace02=on&merge-overwrite02=on&filter03=explode&explode-header-att03=date&explode-value-att03=value&filter04=rename&rename-oldtag04=%23affected%2Bdate&rename-newtag04=%23date&rename-header04=Date&filter05=rename&rename-oldtag05=%23affected%2Bvalue&rename-newtag05=%23affected%2Binfected%2Bvalue%2Bnum&rename-header05=Value&filter06=clean&clean-date-tags06=%23date&filter07=sort&sort-tags07=%23date&sort-reverse07=on&filter08=sort&sort-tags08=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_deaths_global.csv"), comment.char = "#")
 data_rec = read.csv (url("https://data.humdata.org/hxlproxy/data/download/time_series_covid19_recovered_global_narrow.csv?dest=data_edit&filter01=merge&merge-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D1326629740%26single%3Dtrue%26output%3Dcsv&merge-keys01=%23country%2Bname&merge-tags01=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTglKQRXpkKSErDiWG6ycqEth32MY0reMuVGhaslImLjfuLU0EUgyyu2e-3vKDArjqGX7dXEBV8FJ4f%2Fpub%3Fgid%3D398158223%26single%3Dtrue%26output%3Dcsv&merge-keys02=%23adm1%2Bname&merge-tags02=%23country%2Bcode%2C%23region%2Bmain%2Bcode%2C%23region%2Bsub%2Bcode%2C%23region%2Bintermediate%2Bcode&merge-replace02=on&merge-overwrite02=on&filter03=explode&explode-header-att03=date&explode-value-att03=value&filter04=rename&rename-oldtag04=%23affected%2Bdate&rename-newtag04=%23date&rename-header04=Date&filter05=rename&rename-oldtag05=%23affected%2Bvalue&rename-newtag05=%23affected%2Binfected%2Bvalue%2Bnum&rename-header05=Value&filter06=clean&clean-date-tags06=%23date&filter07=sort&sort-tags07=%23date&sort-reverse07=on&filter08=sort&sort-tags08=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_recovered_global.csv"), comment.char = "#")
+```
+
+#Change to Date type
+```{r}
 #Change to Date type#
 data = list(data_con, data_death, data_rec)
 c= c("data_con", "data_death", "data_rec")
@@ -77,19 +81,29 @@ for (i in data) {
      i$Date = as.Date(i$Date)}
 {print(paste("Class of data in", c, "is", class(i$Date)))}
 #Aggregated data-frames using 'aggregate' function#
+```
+#Aggregated data-frames using 'aggregate' function
+
+```{r}
 datasets= list(cases.agg= data_con, death.agg = data_death, recover.agg= data_rec)
 agg= lapply(datasets, function(x) {aggregate(Value ~ Country.Region + Date, data = x, FUN= sum) })
-#Aggregated data-frames using tidyverse#
+```
+#Aggregated data-frames using tidyverse AND Proof of similarity
+
+```{r}
 datasets.pipe = list(cases.agg = data_con, death.agg = data_death, recover.agg = data_rec)
 agg.pipe = lapply(datasets.pipe, function(df){
   df %>% group_by(Country.Region, Date) %>% summarise(Value = sum(Value)) %>% arrange(Date)})
-#proof of similarity between the agg.data#
 T= all_equal(agg, agg.pipe)
 print(paste("aggregation data are similar-", T))
-#data on the 31.3.2020#
+```
+
+#Anaksis of the data on the 31.3.2020
+```{r}
+
 joined_top =  bind_cols(list(agg[[1]], agg[[2]], agg[[3]])) %>%  filter(Date == "2020-03-31") %>%  select("Country.Region", "Value", "Value1", "Value2") %>%  rename(Cases = Value, Died = Value1, Recovered = Value2) %>% arrange(desc(Cases)) %>% top_n( 10, Cases)
 print(joined_top)
-#barplot of data on 31.3.2020# 
+
 cases = matrix (c(joined_top$Cases, joined_top$Died, joined_top$Recovered), nrow=10, ncol=3)
 rownames(cases)= c(as.character(joined_top$Country.Region))
 colnames(cases) = c('Cases','Died','Recovered')
@@ -210,8 +224,8 @@ eco_gdp_90 = eco_gdp %>% mutate(logGDP_per_capita = log((GDP/pop_total)*100)) %>
 lm_pop65 <-lm(formula = as.vector(eco_gdp_90$pop65) ~ as.vector(eco_gdp_90$logGDP_per_capita))
 plot(x = eco_gdp_90$logGDP_per_capita, y = eco_gdp_90$pop65,
      main = "Q3 (d)", 
-     xlab = "logGDP_per_capita",
-     ylab = "Population ages 65 and above (% of total population)",
+     xlab = "GDP per capita (log)",
+     ylab = "% of 65 years or above from total population",
      abline(lm_pop65, col = "red"))
 ```
 
@@ -242,7 +256,7 @@ corona = agg[[1]] %>% bind_cols(select(agg[[2]], Value)) %>% bind_cols(select(ag
 ### b
 First we will prepare data frame eco and corona in order to not lose data. In eco, for example, we have "United States" and in corona we have "US", so when we are doing join we are loosing dataabout United States. But in the orginals data frames eco_data and data_con (we can also take data_deaths or data_rec, it is doesn't change anything because all of them have the same countries). We can use that fact to join properly at data. FOr that we will first add to eco and corona column "Code country".
 ```{r}
-#eco
+#eco#
 codes_corona = c()
 t <- 1
 for (i in as.character(eco$country)){
@@ -257,7 +271,12 @@ for (i in as.character(corona$Country.Region)){
   codes_corona2[k] <- as.character(data_con$ISO.3166.1.Alpha.3.Codes[which(i == as.character(data_con$Country.Region))][1])
   k<- k+1
 }
-corona = corona %>% mutate(`Code country` = codes_corona2)
+corona = corona %>% mutate(`S_country` = codes_corona2)
+
+eco_code = eco_data %>% select(S_country, feature, Y2018V) %>% filter(as.character(feature) != "") %>% spread(feature, Y2018V)  %>%  select(S_country, `Population, total`)
+setdiff(corona$S_country, eco_code$S_country)
+
+
 ```
 Now we will user inner join to join eco and corona by Code Country.
 ```{r}
