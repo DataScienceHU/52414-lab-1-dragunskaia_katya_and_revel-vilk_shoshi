@@ -80,7 +80,6 @@ for (i in data) {
 datasets= list(cases.agg= data_con, death.agg = data_death, recover.agg= data_rec)
 agg= lapply(datasets, function(x) {aggregate(Value ~ Country.Region + Date, data = x, FUN= sum) })
 #Aggregated data-frames using tidyverse#
-library(tidyverse)
 datasets.pipe = list(cases.agg = data_con, death.agg = data_death, recover.agg = data_rec)
 agg.pipe = lapply(datasets.pipe, function(df){
   df %>% group_by(Country.Region, Date) %>% summarise(Value = sum(Value)) %>% arrange(Date)})
@@ -244,12 +243,41 @@ Joining three datas frame using bind_cols and rename
 corona = agg[[1]] %>% bind_cols(select(agg[[2]], Value)) %>% bind_cols(select(agg[[3]], Value)) %>% rename(cases = Value, deaths = Value1, recovered = Value2)
 ```
 ### b
-To join corona and eco using inner_join. Show head to prove that we didn`t lost anythung.
+First we will prepare data frame eco and corona in order to not lose data. In eco, for example, we have "United States" and in corona we have "US", so when we are doing join we are loosing dataabout United States. But in the orginals data frames eco_data and data_con (we can also take data_deaths or data_rec, it is doesn't change anything because all of them have the same countries). We can use that fact to join properly at data. FOr that we will first add to eco and corona column "Code country".
 ```{r}
-corona_eco = corona %>% inner_join(eco, by = c("Country.Region" = "country"))
-rest_countries = corona %>% anti_join(eco, by = c("Country.Region" = "country"))
-rest_countries_vector <- unique(rest_countries$Country.Region)
-
+#eco
+codes_corona = c()
+t <- 1
+for (i in as.character(eco$country)){
+  codes_corona[t] <- as.character(eco_data$S_country[which(i == as.character(eco_data$country))][1])
+  t <- t+1
+}
+eco = eco %>% mutate(`Code country` = codes_corona)
+#corona
+codes_corona2 = c()
+k = 1
+for (i in as.character(corona$Country.Region)){
+  codes_corona2[k] <- as.character(data_con$ISO.3166.1.Alpha.3.Codes[which(i == as.character(data_con$Country.Region))][1])
+  k<- k+1
+}
+corona = corona %>% mutate(`Code country` = codes_corona2)
+```
+Now we will user inner join to join eco and corona by Code Country.
+```{r}
+corona_eco = corona %>% inner_join(eco, by = "Code country") %>% select(Country.Region, Date, cases, deaths, recovered, `Code country`, GDP, pop_total, pop_city_ratio, pop65)
+```
+To show that we didn't lose any data we will check if countries from corona_eco are the same as countries from eco. After that we will also print head of the data frame.
+```{r}
+vector_equality <- function(v1, v2){
+  for (i in v1){
+    check_i <- match(i, v2, nomatch = FALSE)
+    if (!check_i){
+      return(FALSE)
+    }
+  }
+  return(TRUE)
+}
+print(vector_equality(unique(corona_eco$Country.Region), unique(corona$Country.Region[which(corona$Country.Region != "Diamond Princess")])))
 head(corona_eco)
 ```
 ### c
