@@ -312,7 +312,7 @@ plot(corona_eco_plot$pop65, corona_eco_plot$norm_cases,
      ylim=c(min(corona_eco_plot$norm_cases), max(corona_eco_plot$norm_cases)),
      xlim=c(min(corona_eco_plot$pop65), max(corona_eco_plot$pop65)+5))
 par(new=TRUE)
-plot(corona_eco_plot$pop65, corona_eco_plot$norm_deaths, pch= 1,  xlim=c(min(corona_eco_plot$pop65), max(corona_eco_plot$pop65)+5), axes=F, xlab="", ylab="", col = ifelse(corona_eco_plot$norm_deaths > 15 | corona_eco_plot$pop65 > 24, "red", "black"))
+plot(corona_eco_plot$pop65, corona_eco_plot$norm_deaths, pch= 19,  xlim=c(min(corona_eco_plot$pop65), max(corona_eco_plot$pop65)+5), axes=F, xlab="", ylab="", col = ifelse(corona_eco_plot$norm_deaths > 15 | corona_eco_plot$pop65 > 24, "red", "black"))
 axis(4)
 mtext("Normalized death cases", line=3, side=4)
 legend("topright", c("confirmed", "dead"), box.lty = 0, lty=1, pch=19, col=c("green", "black"), inset=0.05)
@@ -333,6 +333,39 @@ Write an interesting research question regarding the Corona outbreak and then fo
 **Solution:**   
 
 YOUR SOLUTION HERE.
-Use code blocks and markdown to clearly communicate your work.
+# Research question: Is the risk of death from Corona is related to the health expenditure per capita (current US$). Data is taken from the world bank, updated for 2017 (no 2018 or 2019 exists). 
+#loading the health expenditure data`:
+```{r}
+
+CHE_data = read.csv(url("https://raw.githubusercontent.com/DataScienceHU/52414-lab-1-dragunskaia_katya_and_revel-vilk_shoshi/master/API_SH.XPD.CHEX.PC.CD_DS2_en_csv_v2_1001395.csv"))
+CHE_data = CHE_data %>%  select(S_country= Country.Code, CHE2017 = X2017)
+
+```
+#creating a dataset of risk of death in the last day of corona_eco data. We limitted the database  for a risk of death higher than 1% and countries with more than 1000 cases.
+
+```{r}
+corona_eco$Date  = as.Date(corona_eco$Date)
+latest = max(corona_eco$Date)
+death_risk = corona_eco %>% filter(Date == latest) %>% mutate(risk= deaths/cases*100) %>%  mutate(GDP_capita= GDP/pop_total) %>% filter(risk > 1) %>% filter(cases >1000) %>%  select(Country.Region, S_country, Date, risk, cases, deaths, GDP_capita, pop_total, pop_city_ratio, pop65)
+```
+# joining the risk_corona and CHE data
+
+```{r}
+Q5 = death_risk %>% left_join(CHE_data, by = 'S_country') %>% mutate(logCHE = log(CHE2017))
+```
+
+#creating the plot 
+```{r}
+
+lm_CHE <-lm(formula = as.vector(Q5$logCHE) ~ as.vector(Q5$risk))
+plot(x= Q5$risk, y= Q5$logCHE, main= "Corona deaths and health expendure", xlab = "Risk of death from Corona", ylab = "Health expendure per capita", abline(lm_CHE, col = "red"))
+print("Increased health expendure per capita in 2017 was not associated with lower risk of death from Corona ")
+
+
+```
+
+
+
+
 
 <br/><br/>  
