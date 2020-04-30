@@ -80,7 +80,7 @@ c= c("data_con", "data_death", "data_rec")
 for (i in data) {
      i$Date = as.Date(i$Date)}
 {print(paste("Class of data in", c, "is", class(i$Date)))}
-#Aggregated data-frames using 'aggregate' function#
+
 ```
 #Aggregated data-frames using 'aggregate' function
 
@@ -98,7 +98,7 @@ T= all_equal(agg, agg.pipe)
 print(paste("aggregation data are similar-", T))
 ```
 
-#Anaksis of the data on the 31.3.2020
+#Analysis of the data on the 31.3.2020
 ```{r}
 
 joined_top =  bind_cols(list(agg[[1]], agg[[2]], agg[[3]])) %>%  filter(Date == "2020-03-31") %>%  select("Country.Region", "Value", "Value1", "Value2") %>%  rename(Cases = Value, Died = Value1, Recovered = Value2) %>% arrange(desc(Cases)) %>% top_n( 10, Cases)
@@ -193,6 +193,7 @@ Create new data frame eco using dplyr functions such like select, filter and spr
 
 ```{r}
 eco = eco_data %>% select(country, feature, Y2018V) %>% filter(as.character(feature) != "") %>% spread(feature, Y2018V)
+head(eco)
 ```
 ### c
 Rename and select using dplyr function select
@@ -254,79 +255,75 @@ Joining three datas frame using bind_cols and rename
 corona = agg[[1]] %>% bind_cols(select(agg[[2]], Value)) %>% bind_cols(select(agg[[3]], Value)) %>% rename(cases = Value, deaths = Value1, recovered = Value2)
 ```
 ### b
-First we will prepare data frame eco and corona in order to not lose data. In eco, for example, we have "United States" and in corona we have "US", so when we are doing join we are loosing dataabout United States. But in the orginals data frames eco_data and data_con (we can also take data_deaths or data_rec, it is doesn't change anything because all of them have the same countries). We can use that fact to join properly at data. FOr that we will first add to eco and corona column "Code country".
+In order not to lose essentail data we decided to use the countries abbreviations from the original eco_data and to add abbreviations to the corona data-set. 
 ```{r}
-#eco#
 codes_corona = c()
-t <- 1
-for (i in as.character(eco$country)){
-  codes_corona[t] <- as.character(eco_data$S_country[which(i == as.character(eco_data$country))][1])
-  t <- t+1
-}
-eco = eco %>% mutate(`Code country` = codes_corona)
-#corona
-codes_corona2 = c()
 k = 1
 for (i in as.character(corona$Country.Region)){
-  codes_corona2[k] <- as.character(data_con$ISO.3166.1.Alpha.3.Codes[which(i == as.character(data_con$Country.Region))][1])
+  codes_corona[k] <- as.character(data_con$ISO.3166.1.Alpha.3.Codes[which(i == as.character(data_con$Country.Region))][1])
   k<- k+1
 }
-corona = corona %>% mutate(`S_country` = codes_corona2)
-
-eco_code = eco_data %>% select(S_country, feature, Y2018V) %>% filter(as.character(feature) != "") %>% spread(feature, Y2018V)  %>%  select(S_country, `Population, total`)
-setdiff(corona$S_country, eco_code$S_country)
-
+corona = corona %>% mutate(S_country = codes_corona)
+eco_code = eco_data %>% select(S_country, feature, Y2018V) %>% filter(as.character(feature) != "") %>% spread(feature, Y2018V)  %>%  select(S_country, GDP = `GDP (current US$)`, pop_total = `Population, total`, pop_city_ratio = `Population in the largest city (% of urban population)`, pop65 = `Population ages 65 and above (% of total population)`) 
+x = setdiff(corona$S_country, eco_code$S_country)
+y= c("Vatican", "Kosovo", "Taiwan", "Westren Sahara")
+print(paste("Missing data for ", c(x[2:5]),"-", y[1:4]))
 
 ```
-Now we will user inner join to join eco and corona by Code Country.
+After we showed we will we kept most of the data we can use inner join to join eco_code and corona by S_country
 ```{r}
-corona_eco = corona %>% inner_join(eco, by = "Code country") %>% select(Country.Region, Date, cases, deaths, recovered, `Code country`, GDP, pop_total, pop_city_ratio, pop65)
+corona_eco = corona %>% inner_join(eco_code, by = 'S_country') 
+
 ```
-To show that we didn't lose any data we will check if countries from corona_eco are the same as countries from eco. After that we will also print head of the data frame.
-```{r}
-vector_equality <- function(v1, v2){
-  for (i in v1){
-    check_i <- match(i, v2, nomatch = FALSE)
-    if (!check_i){
-      return(FALSE)
-    }
-  }
-  return(TRUE)
-}
-print(vector_equality(unique(corona_eco$Country.Region), unique(corona$Country.Region[which(corona$Country.Region != "Diamond Princess")])))
-head(corona_eco)
-```
+
 ### c
 1. Using mutate we creating three new colums.
 2. Build par plot similary to Q1. We can see that even if a country occupies a high position in terms of the number of confurmed cases, this does not mean that there is a large number of confurmed cases per 100000. It is depends of total populatin in the country.
 ```{r}
 #1
-corona_eco = corona_eco %>% mutate(norm_cases = (cases/pop_total)*100000) %>% mutate(norm_recovered = (recovered/pop_total)*100000) %>% mutate(norm_deaths = (deaths/pop_total)*100000)
+corona_eco = corona_eco %>% mutate(norm_cases = (cases/pop_total)*100000) %>% mutate(norm_recovered = (recovered/pop_total)*100000) %>% mutate(norm_deaths = (deaths/pop_total)*100000) 
+
 #2
-corona_eco_march = corona_eco %>% filter(Date == "2020-03-31") %>% arrange(desc(norm_cases)) %>% top_n( 10, norm_cases) %>% select(Country.Region, norm_cases, norm_recovered, norm_deaths)
+corona_eco_march = corona_eco %>% filter(Date == "2020-03-31") %>% arrange(desc(norm_cases)) %>% top_n( 10, norm_cases) %>% select(Country.Region, norm_cases, norm_deaths, norm_recovered)
 
 cases_norm = matrix (c(corona_eco_march$norm_cases, corona_eco_march$norm_deaths, corona_eco_march$norm_recovered), nrow=10, ncol=3)
 rownames(cases_norm)= c(as.character(corona_eco_march$Country.Region))
 colnames(cases_norm) = c('norm_cases','norm_died','norm_recovered')
+print(cases_norm)
 cases_norm.t = t(cases_norm)
-par(mar = c(11, 11, 11, 11))
-{cases_norm.plot = barplot(cases_norm.t[1,], ylab = "Number of Corona sick cases per 100000 people", xlab= "Countries", main = "The top 10 countries with  confirmed cases in 31 March 2020", width= 0.5,  cex.axis = 0.75, cex.lab= 1, las= 1, col = c("red"), ylim= c(0,1000))
-others.plot = barplot(cases_norm.t[2:3,], width= 0.5, cex.axis = 0.75, cex.lab= 1, las= 1, col = c("dark blue", "green"), legend = rownames(cases.t[2:3,]), add = T)}
+{cases.plot = barplot(cases_norm.t[1,], ylab = "Corona cases per 10000 population", xlab= "Countries", main = "Top 10 countries with normalized cases in 31 March 2020", width= 0.5,  cex.axis = 0.75, cex.lab= 1, las= 1, col = "red", ylim= c(0,1000))
+others.plot = barplot(cases_norm.t[2:3,], width= 0.5, cex.axis = 0.75, cex.lab= 1, las= 1, col=c("green","dark blue"), add = T)
+legend(4.5, 800, c("sick", "dead", "recovered"), fill= rainbow(3))}
 ```
+## The scale of normalized cases is significanctly lower and the top 10 countries are different. 
 
 ### d
 First we create data frame to make work easily. Then we build plot using basic graph function.
 ```{r}
-corona_eco_plot = corona_eco %>% filter(pop65 > 15) %>% filter(Date == "2020-03-31")
-deaths_num <- which(corona_eco_plot$norm_deaths > 15)
-pop65_num <- which(corona_eco_plot$pop65 > 24)
-plot(x = corona_eco_plot$norm_cases, y = corona_eco_plot$pop65,
-     col = ifelse((corona_eco_plot$pop65 > 24), "red", "black"),
-     points(x = corona_eco_plot$norm_deaths, col = ifelse(corona_eco_plot$norm_deaths > 15, "red", "black")),
-     xlab = "Cases and death",
-     ylab = "Population above 65")
-text(corona_eco_plot$pop65[pop65_num], labels = corona_eco_plot$Country.Region[pop65_num])
-text(corona_eco_plot$norm_deaths[deaths_num], corona_eco_plot$pop65[deaths_num], labels = corona_eco_plot$Country.Region[deaths_num])
+corona_eco_plot = corona_eco %>% filter(pop65 >= 15) %>% filter(Date == "2020-03-31") %>% select(Country.Region, norm_cases, norm_deaths, norm_recovered, pop65)
+print(corona_eco_plot)
+#making the plot#
+par(mar=c(4, 4, 4, 4) + 0.1)
+plot(corona_eco_plot$pop65, corona_eco_plot$norm_cases, 
+      xlab= "% population 65 years or above", 
+      ylab= "Normalized confirmed cases", 
+      main= "Corona cases and death in 31 March 2020",
+      pch=19, 
+     col="green", 
+     ylim=c(min(corona_eco_plot$norm_cases), max(corona_eco_plot$norm_cases)),
+     xlim=c(min(corona_eco_plot$pop65), max(corona_eco_plot$pop65)+5))
+par(new=TRUE)
+plot(corona_eco_plot$pop65, corona_eco_plot$norm_deaths, pch= 19,  xlim=c(min(corona_eco_plot$pop65), max(corona_eco_plot$pop65)+5), axes=F, xlab="", ylab="", col = ifelse(corona_eco_plot$norm_deaths > 15 | corona_eco_plot$pop65 > 24, "red", "black"))
+axis(4)
+mtext("Normalized death cases", line=3, side=4)
+legend("topright", c("confirmed", "dead"), box.lty = 0, lty=1, pch=19, col=c("green", "black"), inset=0.05)
+text(corona_eco_plot$pop65[which(corona_eco_plot$pop65 > 24)], 
+     corona_eco_plot$norm_cases[which(corona_eco_plot$pop65 > 24)], 
+     labels = corona_eco_plot$Country.Region[which(corona_eco_plot$pop65 > 24)])
+text(corona_eco_plot$pop65[which(corona_eco_plot$norm_deaths > 15)], 
+     corona_eco_plot$norm_deaths[which(corona_eco_plot$norm_deaths > 15)], 
+     labels = corona_eco_plot$Country.Region[which(corona_eco_plot$norm_deaths > 15)])
+
 ```
 
 <br/><br/>  
@@ -342,6 +339,43 @@ Write an interesting research question regarding the Corona outbreak and then fo
 **Solution:**   
 
 YOUR SOLUTION HERE.
-Use code blocks and markdown to clearly communicate your work.
+# Research question: Is the risk of death from Corona related to the health expenditure per capita (current US$) ? 
+#Data is taken from the world bank, updated for 2017 (no 2018 or 2019 exists). 
+#loading the health expenditure data`:
+```{r}
+
+CHE_data = read.csv(url("https://raw.githubusercontent.com/DataScienceHU/52414-lab-1-dragunskaia_katya_and_revel-vilk_shoshi/master/API_SH.XPD.CHEX.PC.CD_DS2_en_csv_v2_1001395.csv"))
+CHE_data = CHE_data %>%  select(S_country= Country.Code, CHE2017 = X2017)
+
+```
+#creating a dataset of risk of death in the last day of corona_eco data. We limitted the database  for a risk of death higher than 1% and countries with more than 1000 cases.
+
+```{r}
+corona_eco$Date  = as.Date(corona_eco$Date)
+latest = max(corona_eco$Date)
+death_risk = corona_eco %>% filter(Date == latest) %>% mutate(risk= deaths/cases*100) %>%  mutate(GDP_capita= GDP/pop_total) %>% filter(risk > 1) %>% filter(cases >1000) %>%  select(Country.Region, S_country, Date, risk, cases, deaths, GDP_capita, pop_total, pop_city_ratio, pop65)
+```
+# joining the risk_corona and CHE data
+
+```{r}
+Q5 = death_risk %>% left_join(CHE_data, by = 'S_country') %>% mutate(logCHE = log(CHE2017))
+```
+
+#creating the plot 
+```{r}
+
+lm_CHE <-lm(formula = as.vector(Q5$logCHE) ~ as.vector(Q5$risk))
+corr = cor.test(x= Q5$risk, y= Q5$logCHE)
+plot(x= Q5$risk, y= Q5$logCHE, main= "Corona deaths and health expendure", xlab = "Risk of death from Corona", ylab = "Health expendure per capita (log)", abline(lm_CHE, col = "red"))
+print("Increased health expendure per capita in 2017 is weakly correlated with higher risk of death from Corona")
+print(corr)
+
+
+
+```
+
+
+
+
 
 <br/><br/>  
